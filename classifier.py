@@ -12,6 +12,9 @@ from os.path import isfile, join
 
 import pygraphviz
 import networkx as nx
+from sets import Set
+
+category = ['others', 'sorting']
 
 def convert_to_numpy_matrix(g, size):
     res = np.zeros((size,size))
@@ -22,6 +25,13 @@ def convert_to_numpy_matrix(g, size):
 def read_file(path):
     g = nx.Graph(pygraphviz.AGraph(path))
     return convert_to_numpy_matrix(g,ConfigSVM.matrix_size)
+
+def build_training_vector(train_files):
+    i = 0
+    y = []
+    for file in train_files:
+        y += [[i]* len (file)]
+    return y 
 
 if (len(sys.argv) == 3):
     if (sys.argv[1] == "colo"):
@@ -37,24 +47,29 @@ if (len(sys.argv) == 3):
 
     test_files = [join(".",str(sys.argv[2]))]
 
-    train_sort_path = pathToDataset + '/sorting/'
-    train_nonSort_path = pathToDataset + '/non-sorting/'
-    train_sort_files = [train_sort_path + f for f in listdir(train_sort_path) if isfile(join(train_sort_path, f))]
-    train_nonSort_files = [train_nonSort_path + f for f in listdir(train_nonSort_path) if isfile(join(train_nonSort_path, f))]
+    train_path = []
+    for i in category:
+        train_path.append(pathToDataset+'/'+i+'/')
+    train_files = []
+    for i in train_path:
+        train_files.append([i + f for f in listdir(i) if isfile(join(i, f))])
 
+    print len(train_files)
+    print type(train_files)
+    
 else:
 	print 'usage: python classifier call/colo pathToTestFile'
 	sys.exit(1)
 
 print 'Finished to load paths'
 
+
 ##############################################
 
 train_data = []
-for p in train_sort_files:
-    train_data.append(read_file(p).ravel())
-for p in train_nonSort_files:
-    train_data.append(read_file(p).ravel())
+for p in train_files:
+    for i in p:
+        train_data.append(read_file(i).ravel())
 train_data = np.array(train_data)
 
 test_data = []
@@ -80,6 +95,7 @@ start = timeit.default_timer()
 ##############################################
 
 y = np.concatenate((np.ones(len(train_sort_files)), np.zeros(len(train_nonSort_files))))
+print y
 classifier = SVC(kernel=ShortestPath())
 classifier.fit(train_data, y)
 print 'Finished to feed data'
