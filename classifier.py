@@ -1,13 +1,12 @@
-from sklearn.externals import joblib
-from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score
-from pykernels.graph.shortestpath2 import ShortestPath
-from config import ConfigSVM
-import sys
 import numpy as np
+from sklearn.svm import SVC
+from config import ConfigSVM
+from pykernels.graph.shortestpath2 import ShortestPath
+
 import timeit
 import datetime
 
+import sys
 from os import listdir
 from os.path import isfile, join
 
@@ -30,7 +29,7 @@ if (len(sys.argv) == 3):
     elif (sys.argv[1] == "call"):
         pathToDataset = './../dataset/callgrind'
     else:
-        print "usage: call/col"
+        print 'usage: call/colo'
         sys.exit(1)
 
     file = open(join(pathToDataset, "maxsize"),'r')
@@ -44,7 +43,7 @@ if (len(sys.argv) == 3):
     train_nonSort_files = [train_nonSort_path + f for f in listdir(train_nonSort_path) if isfile(join(train_nonSort_path, f))]
 
 else:
-	print "usage: python classifier call/col pathToTestFile"
+	print 'usage: python classifier call/colo pathToTestFile'
 	sys.exit(1)
 
 print 'Finished to load paths'
@@ -56,9 +55,7 @@ for p in train_sort_files:
     train_data.append(read_file(p).ravel())
 for p in train_nonSort_files:
     train_data.append(read_file(p).ravel())
-
 train_data = np.array(train_data)
-print "train data ", train_data.shape
 
 test_data = []
 for p in test_files:
@@ -71,14 +68,11 @@ test_data = np.array(test_data)
 
 nsamples, nx, ny = train_data.shape
 train_data = train_data.reshape((nsamples,nx*ny))
-
-print len(train_data), train_data.shape
 print 'Finished to load training data'
 
 nsamples, nx, ny = test_data.shape
 test_data = test_data.reshape((nsamples,nx*ny))
 
-print len(test_data), test_data.shape
 print 'Finished to load testing data'
 
 start = timeit.default_timer()
@@ -92,14 +86,14 @@ print 'Finished to feed data'
 
 stop = timeit.default_timer()
 training_time = stop - start
-print 'Training Time: ', training_time
+print 'Training Time: ", training_time'
 start = timeit.default_timer()
 
 ##############################################
 
 predicted = classifier.predict(test_data)
 
-print 'Predictions:', predicted
+print 'Predictions: ', predicted
 stop = timeit.default_timer()
 print 'Training Time: ', training_time
 print 'Testing Time: ', stop - start
