@@ -17,19 +17,20 @@ import networkx as nx
 def convert_to_numpy_matrix(g, size):
     res = np.zeros((size,size))
     for s, d, w in g.edges(data=True):
-        label = ""
-        label = g.number_of_edges(s, d)
-        res[int(s)][int(d)] = int(label)
+        if int(s) > size or int(d) > size :
+            print s, d, size
+        res[int(s)][int(d)] = int(g.number_of_edges(s, d))
     return np.asmatrix(res)
 
 def read_file(path):
     g = nx.Graph(pygraphviz.AGraph(path))
     res1 = convert_to_numpy_matrix(g,ConfigSVM.matrix_size)
+    #res = nx.to_numpy_matrix(g,nodelist=range(ConfigSVM.matrix_size+1))
     return res1
 
 if (len(sys.argv) == 3):
-    if (sys.argv[1] == "col"):
-        pathToDataset = './../dataset/cologrind'    
+    if (sys.argv[1] == "colo"):
+        pathToDataset = './../dataset/cologrind'
     elif (sys.argv[1] == "call"):
         pathToDataset = './../dataset/callgrind'
     else:
@@ -38,6 +39,8 @@ if (len(sys.argv) == 3):
 
     file = open(join(pathToDataset, "maxsize"),'r')
     ConfigSVM.matrix_size = int(file.read())
+    #debug
+    ConfigSVM.matrix_size = 350
 
     test_files = [join(".",str(sys.argv[2]))]
 
@@ -62,6 +65,8 @@ for p in train_nonSort_files:
 
 train_data = np.array(train_data)
 print "train data ", train_data.shape
+
+#sys.exit(0)
 
 test_data = []
 for p in test_files:
@@ -93,10 +98,9 @@ start = timeit.default_timer()
 ##############################################
 
 y = np.concatenate((np.ones(len(train_sort_files)), np.zeros(len(train_nonSort_files))))
-print "Y", len(y)
+print "Y", len(y), train_data.shape
 classifier = SVC(kernel=ShortestPath())
 classifier.fit(train_data, y)
-
 print 'Finished to feed data'
 
 stop = timeit.default_timer()
