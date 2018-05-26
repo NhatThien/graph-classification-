@@ -30,7 +30,8 @@ def build_training_vector(train_files):
     i = 0
     y = []
     for file in train_files:
-        y += [[i]* len (file)]
+        y += [i]* len (file)
+        i += 1
     return y 
 
 if (len(sys.argv) == 3):
@@ -53,9 +54,6 @@ if (len(sys.argv) == 3):
     train_files = []
     for i in train_path:
         train_files.append([i + f for f in listdir(i) if isfile(join(i, f))])
-
-    print len(train_files)
-    print type(train_files)
     
 else:
 	print 'usage: python classifier call/colo pathToTestFile'
@@ -94,8 +92,7 @@ start = timeit.default_timer()
 
 ##############################################
 
-y = np.concatenate((np.ones(len(train_sort_files)), np.zeros(len(train_nonSort_files))))
-print y
+y = build_training_vector(train_files)
 classifier = SVC(kernel=ShortestPath())
 classifier.fit(train_data, y)
 print 'Finished to feed data'
