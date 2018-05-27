@@ -29,7 +29,10 @@ def build_training_vector(train_files):
     for file in train_files:
         y += [i]* len (file)
         i += 1
-    return y 
+    return y
+def result (predicted):
+    path = [x.strip() for x in train_path[predicted[0]].split('/')]
+    return path[-2]
 
 if (len(sys.argv) == 3):
     if (sys.argv[1] == "colo"):
@@ -103,6 +106,7 @@ start = timeit.default_timer()
 predicted = classifier.predict(test_data)
 
 print 'Predictions: ', predicted
+print 'this is a code ', result(predicted)
 stop = timeit.default_timer()
 print 'Training Time: ', training_time
 print 'Testing Time: ', stop - start
