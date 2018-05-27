@@ -8,18 +8,10 @@ import datetime
 
 import sys
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, isdir, join
 
 import pygraphviz
 import networkx as nx
-import json
-
-with open('category.json') as f:
-    data = json.load(f)
-
-category = []
-for i in data:
-    category.insert(data[i]['index'],i)
 
 def convert_to_numpy_matrix(g, size):
     res = np.zeros((size,size))
@@ -53,9 +45,8 @@ if (len(sys.argv) == 3):
 
     test_files = [join(".",str(sys.argv[2]))]
 
-    train_path = []
-    for i in category:
-        train_path.append(pathToDataset+'/'+i+'/')
+    train_path = [pathToDataset+'/'+i+'/' for i in listdir(pathToDataset) if isdir(join(pathToDataset,i))]
+    
     train_files = []
     for i in train_path:
         train_files.append([i + f for f in listdir(i) if isfile(join(i, f))])
