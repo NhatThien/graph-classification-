@@ -12,9 +12,14 @@ from os.path import isfile, join
 
 import pygraphviz
 import networkx as nx
-from sets import Set
+import json
 
-category = ['others', 'sorting']
+with open('category.json') as f:
+    data = json.load(f)
+
+category = []
+for i in data:
+    category.insert(data[i]['index'],i)
 
 def convert_to_numpy_matrix(g, size):
     res = np.zeros((size,size))
